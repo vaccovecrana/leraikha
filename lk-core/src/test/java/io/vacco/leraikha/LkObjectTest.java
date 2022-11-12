@@ -12,8 +12,8 @@ import static j8spec.J8Spec.*;
 public class LkObjectTest {
   static {
     it("Scans an object's properties", () -> {
-      var lol = LkObjects.from(BlockBucket.class);
-      var lel = LkObjects.from(MegaBlock.class);
+      var lol = LkObjects.objectOf(BlockBucket.class);
+      var lel = LkObjects.objectOf(MegaBlock.class);
       System.out.println("lol");
     });
   }

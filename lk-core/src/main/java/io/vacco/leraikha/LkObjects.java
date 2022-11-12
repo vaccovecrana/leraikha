@@ -31,9 +31,7 @@ public class LkObjects {
 
   public static Optional<Class<?>> genericTypeOf(Field f) {
     var t = f.getGenericType();
-    if (t instanceof Class) {
-      return Optional.of((Class<?>) t);
-    } else if (t instanceof ParameterizedType) {
+    if (t instanceof ParameterizedType) {
       ParameterizedType pt = (ParameterizedType) t;
       if (pt.getRawType() instanceof Class) {
         Class<?> prc = (Class<?>) pt.getActualTypeArguments()[0];
@@ -43,26 +41,34 @@ public class LkObjects {
     return Optional.empty();
   }
 
-  public static LkObject from(Class<?> clazz) {
+  public static Optional<LkProperty> propertyOf(Field field) {
+    int mods = field.getModifiers();
+    if (Modifier.isPublic(mods) && !Modifier.isStatic(mods)) {
+      var lkp = new LkProperty().withField(field);
+      var opg = genericTypeOf(field);
+      if (opg.isPresent()) {
+        lkp.withType(opg.get());
+        lkp.withCollectionType(field.getType());
+      } else {
+        lkp.withType(field.getType());
+      }
+      for (Annotation an : field.getDeclaredAnnotations()) {
+        if (isMappable(an)) {
+          lkp.constraints.add(an);
+        }
+      }
+      return Optional.of(lkp);
+    }
+    return Optional.empty();
+  }
+
+  public static LkObject objectOf(Class<?> clazz) {
     var obj = new LkObject().withClass(clazz);
     var cN = clazz;
     while (cN != null) {
+      // TODO map fields and generate validation constraints.
       for (var field : cN.getDeclaredFields()) {
-        int mods = field.getModifiers();
-        if (Modifier.isPublic(mods) && !Modifier.isStatic(mods)) {
-          var prop = new LkProperty().withField(field);
-
-          field.setAccessible(true);
-          obj.properties.add(prop);
-
-          genericTypeOf(field); // TODO map fields and generate validation constraints.
-
-          for (Annotation an : field.getDeclaredAnnotations()) {
-            if (isMappable(an)) {
-              prop.constraints.add(an);
-            }
-          }
-        }
+        propertyOf(field).ifPresent(lkp -> obj.properties.add(lkp));
       }
       cN = cN.getSuperclass();
     }
