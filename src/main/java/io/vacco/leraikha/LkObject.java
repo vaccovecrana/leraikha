@@ -15,4 +15,5 @@ public class LkObject {
   @Override public String toString() {
     return clazz == null ? "?" : clazz.getCanonicalName();
   }
+
 }

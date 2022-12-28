@@ -5,6 +5,6 @@ import jakarta.validation.constraints.*;
 import java.util.*;
 
 public class BlockBucket {
-  @NotNull @NotEmpty @Size(max = 10)
+  @NotNull @Size(max = 10)
   public List<@Valid MegaBlock> blocks = new ArrayList<>();
 }

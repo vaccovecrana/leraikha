@@ -7,7 +7,7 @@ import java.util.*;
 public class LkProperty {
 
   public Field field;
-  public Type type;
+  public Type type0, type1;
   public Type collectionType;
   public List<Annotation> constraints = new ArrayList<>();
 
@@ -16,8 +16,13 @@ public class LkProperty {
     return this;
   }
 
-  public LkProperty withType(Type t) {
-    this.type = Objects.requireNonNull(t);
+  public LkProperty withType0(Type t) {
+    this.type0 = Objects.requireNonNull(t);
+    return this;
+  }
+
+  public LkProperty withType1(Type t) {
+    this.type1 = Objects.requireNonNull(t);
     return this;
   }
 
@@ -30,7 +35,7 @@ public class LkProperty {
     return String.format("%s %s (%d)",
         field != null ? field.getName() : "?",
         collectionType != null
-            ? String.format("%s<%s>", collectionType.getTypeName(), type.getTypeName())
+            ? String.format("%s<%s>", collectionType.getTypeName(), type0.getTypeName())
             : field != null ? field.getType().getSimpleName() : "?",
         constraints.size()
     );
