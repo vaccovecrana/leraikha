@@ -25,7 +25,7 @@ public class LkObjectTest {
       }
     });
     it("Scans an object's properties", () -> {
-      var ctx = new LkContext(BucketShelf.class);
+      var ctx = new LkContext(BucketShelf.class, PojoWithMap.class);
       var schema = ctx.buildSchema();
       System.out.println(schema);
     });

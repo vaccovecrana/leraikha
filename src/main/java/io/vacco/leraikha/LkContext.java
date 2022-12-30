@@ -17,8 +17,6 @@ public class LkContext {
   private final Gson g = new GsonBuilder().setPrettyPrinting().create();
   private final Map<Type, LkObject> classIdx;
 
-  // TODO add initialization parameters (i.e. output dir, prefix, etc.).
-
   public LkContext(Class<?> ... classes) {
     this.classIdx = LkObjects.indexOf(classes);
   }
@@ -81,7 +79,7 @@ public class LkContext {
       .filter(p -> p.constraints.stream().anyMatch(a -> a instanceof NotNull))
       .map(p -> p.field.getName())
       .collect(Collectors.toList());
-    return obj(
+    var out = obj(
       kv(pType, pObject),
       kv("properties", mapOn(
         o.properties.stream()
@@ -89,6 +87,8 @@ public class LkContext {
       )),
       reqProps.isEmpty() ? kv("", "") : kv("required", reqProps)
     );
+    out.remove("");
+    return out;
   }
 
   private Object mapDefinitions() {
